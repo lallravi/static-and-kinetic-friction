@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definitive Friction Lesson for IB Physics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f8fafc;
+            color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        .lesson-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+        .slide { display: none; padding: 30px 40px; }
+        .slide.active { display: block; }
+        h1, h2 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-top: 0; }
+        p, li { line-height: 1.6; font-size: 1.1em; }
+        .formula { background-color: #f1f5f9; border-left: 5px solid #6366f1; padding: 18px; margin: 25px 0; font-size: 1.5em; text-align: center; border-radius: 6px; }
+        .navigation { display: flex; justify-content: space-between; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+        .nav-button { background-color: #6366f1; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; font-weight: 500; cursor: pointer; transition: background-color 0.2s; }
+        .nav-button:hover { background-color: #4338ca; }
+        .nav-button.hidden { visibility: hidden; }
+        .content-layout { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; }
+        .diagram-column, .graph-column { flex: 1; min-width: 300px; }
+        .diagram-container {
+            position: relative;
+            height: 320px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .graph-container-wrapper {
+            position: relative;
+            height: 320px; 
+            margin-top: 20px;
+        }
+
+        .controls { margin-top: 15px; text-align: center; }
+        .controls label { font-weight: 500; margin-right: 10px; }
+        .controls input[type="range"] { width: 60%; vertical-align: middle; }
+        .status-box {
+            margin-top: 15px; padding: 12px; border-radius: 6px; text-align: center;
+            font-weight: 500; font-size: 1.1em; transition: all 0.3s;
+        }
+        .status-box.static { background-color: #ecfccb; color: #4d7c0f; }
+        .status-box.impending { background-color: #fef9c3; color: #a16207; }
+        .status-box.kinetic, .status-box.sliding { background-color: #fee2e2; color: #b91c1c; }
+
+        /* Styles for Slide 2 and 3 diagrams */
+        .surface { position: absolute; top: calc(50% + 30px); width: 100%; height: 3px; background-color: #475569; }
+        .block { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 60px; background-color: #be123c; border-radius: 2px; z-index: 10; transition: left 0.1s linear; }
+        .vector { position: absolute; z-index: 20; }
+        .vector-body { position: absolute; }
+        .vector-head { position: absolute; width: 0; height: 0; }
+        .vector-label { position: absolute; font-size: 1.2em; font-weight: 600; white-space: nowrap; }
+        .vector.vertical { left: 50%; width: 4px; height: 80px; }
+        .vector.vertical::after { content: ''; position: absolute; left: -7px; border-left: 9px solid transparent; border-right: 9px solid transparent; }
+        #simNormal, #normalVector { background: #7c3aed; top: 50%; transform: translate(-50%, -100%); }
+        #simNormal::after, #normalVector::after { top: -14px; border-bottom: 14px solid #7c3aed; }
+        #simNormal .vector-label, #normalVector .vector-label { top: -25px; left: 15px; color: #7c3aed; }
+        #simGravity, #gravityVector { background: #16a34a; top: 50%; transform: translate(-50%, 0); }
+        #simGravity::after, #gravityVector::after { bottom: -14px; border-top: 14px solid #16a34a; }
+        #simGravity .vector-label, #gravityVector .vector-label { bottom: -25px; left: 15px; color: #16a34a; }
+        #simApplied { left: 50%; top: 50%; transform: translateY(-50%); }
+        #simApplied .vector-body { top: 0; left: 0; height: 4px; background: #2563eb; }
+        #simApplied .vector-head { top: -7px; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 14px solid #2563eb; }
+        #simApplied .vector-label { top: -40px; color: #2563eb; }
+        #simFriction { right: 50%; top: 50%; transform: translateY(-50%); }
+        #simFriction .vector-body { top: 0; right: 0; height: 4px; background: #d97706; }
+        #simFriction .vector-head { top: -7px; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-right: 14px solid #d97706; }
+        #simFriction .vector-label { top: -40px; color: #d97706; }
+        
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="lesson-container">
+        
+        <div id="slide1" class="slide">
+            <h1>Slide 1: What is Friction? 🤔</h1>
+            <p>Imagine trying to push a heavy bookshelf across the floor. That resistance you feel is <b>friction</b>. It's a force that opposes motion between surfaces that are in contact. At a microscopic level, no surface is perfectly smooth. They have tiny hills and valleys that interlock, creating resistance.</p>
+            <p>In IB Physics, we focus on two main types:</p>
+            <ul>
+                <li><b>Static Friction (\(f_s\)):</b> This is the "get it started" friction. It's a reactive force that prevents an object from moving. If you push the bookshelf with 10 N of force and it doesn't move, static friction is pushing back with exactly 10 N. It's a "smart" force that adjusts itself, but it has a maximum limit.</li>
+                <li><b>Kinetic Friction (\(f_k\)):</b> This is the "keep it going" friction. Once you push hard enough to overcome static friction, the bookshelf starts sliding. The friction force that now opposes its motion is kinetic friction. It's generally a constant value and is <b>weaker</b> than the maximum static friction. This is why it's always harder to start pushing something than to keep it sliding!</li>
+            </ul>
+            <div class="navigation"><button class="nav-button hidden">Back</button><button class="nav-button" data-target="slide2">Next: The Formulas &raquo;</button></div>
+        </div>
+
+        <div id="slide2" class="slide">
+            <h1>Slide 2: The Physics & The Formulas 📝</h1>
+            <p>To calculate friction, we first need to understand the <b>Normal Force (\(F_N\))</b>. This isn't always the same as weight! It's the perpendicular force that a surface exerts on an object. On a simple flat surface, the normal force balances the force of gravity (\(F_g = mg\)), so \(F_N = mg\).</p>
+            <div class="diagram-container">
+                <div class="surface"></div><div class="block"></div>
+                <div id="gravityVector" class="vector vertical"><span class="vector-label">\(F_g\)</span></div>
+                <div id="normalVector" class="vector vertical"><span class="vector-label">\(F_N\)</span></div>
+            </div>
+            <h2>Static Friction Formula</h2><div class="formula">$$ f_s \leq \mu_s F_N $$</div>
+            <p>The "less than or equal to" (\(\leq\)) is key. The static friction force, \(f_s\), will be anything from 0 up to its maximum possible value, \(f_{s,max} = \mu_s F_N\).</p>
+            <h2>Kinetic Friction Formula</h2><div class="formula">$$ f_k = \mu_k F_N $$</div>
+            <p>Once moving, the kinetic friction force, \(f_k\), is a constant value determined by the coefficient of kinetic friction, \(\mu_k\).</p>
+            <div class="navigation"><button class="nav-button" data-target="slide1">&laquo; Back</button><button class="nav-button" data-target="slide3">Next: Simulation &raquo;</button></div>
+        </div>
+
+        <div id="slide3" class="slide">
+            <h1>Slide 3: Interactive Simulation 🔬</h1>
+            <p>Use the slider to apply force. Watch how the vectors and the graph change as you transition from the static to the kinetic region.</p>
+            <div class="content-layout">
+                <div class="diagram-column">
+                    <h4>Free-Body Diagram</h4>
+                    <div class="diagram-container">
+                        <div class="surface"></div><div id="simBlock" class="block"></div>
+                        <div id="simGravity" class="vector vertical"><span class="vector-label">\(F_g\)</span></div>
+                        <div id="simNormal" class="vector vertical"><span class="vector-label">\(F_N\)</span></div>
+                        <div id="simApplied" class="vector"><div class="vector-body"></div><div class="vector-head"></div><span class="vector-label">0 N</span></div>
+                        <div id="simFriction" class="vector"><div class="vector-body"></div><div class="vector-head"></div><span class="vector-label">0 N</span></div>
+                    </div>
+                    <div class="controls"><input type="range" id="forceSlider" min="0" max="150" value="0" step="1"></div>
+                     <div id="statusBox" class="status-box">Use the slider to apply force.</div>
+                </div>
+                <div class="graph-column">
+                    <h4>Friction Force vs. Applied Force</h4>
+                    <div class="graph-container-wrapper">
+                        <canvas id="frictionGraph"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="nav-button" data-target="slide2">&laquo; Back</button>
+                <button class="nav-button hidden">Next</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = {
+            init() {
+                this.setupNavigation();
+                this.setupSlide3();
+                this.showSlide('slide1');
+            },
+            setupNavigation() {
+                document.querySelectorAll('.nav-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const targetSlide = e.target.getAttribute('data-target');
+                        if (targetSlide) this.showSlide(targetSlide);
+                    });
+                });
+            },
+            showSlide(slideId) {
+                document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+                const newSlide = document.getElementById(slideId);
+                if (newSlide) {
+                    newSlide.classList.add('active');
+                    this.typesetMath();
+                }
+            },
+            typesetMath() {
+                if (window.MathJax) {
+                    MathJax.typesetPromise().catch((err) => console.error("MathJax typesetting failed: ", err));
+                }
+            },
+
+            setupSlide3() {
+                const slider = document.getElementById('forceSlider');
+                if (!slider) return;
+
+                const elements = {
+                    block: document.getElementById('simBlock'),
+                    statusBox: document.getElementById('statusBox'),
+                    applied: { vec: document.getElementById('simApplied'), body: document.getElementById('simApplied').querySelector('.vector-body'), head: document.getElementById('simApplied').querySelector('.vector-head'), label: document.getElementById('simApplied').querySelector('.vector-label') },
+                    friction: { vec: document.getElementById('simFriction'), body: document.getElementById('simFriction').querySelector('.vector-body'), head: document.getElementById('simFriction').querySelector('.vector-head'), label: document.getElementById('simFriction').querySelector('.vector-label') },
+                    chart: null
+                };
+
+                const config = { maxStaticFriction: 100, kineticFriction: 75, maxMovement: 40, scaleFactor: 1.2 };
+                const ctx = document.getElementById('frictionGraph').getContext('2d');
+
+                const fullLabels = Array.from({ length: parseInt(slider.max) + 1 }, (_, i) => i);
+                const fullFrictionData = fullLabels.map(i => (i <= config.maxStaticFriction) ? i : (i > 0 ? config.kineticFriction : 0));
+
+                elements.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: fullLabels,
+                        datasets: [{
+                            label: 'Friction Force',
+                            data: fullFrictionData,
+                            borderColor: '#d97706',
+                            borderWidth: 4,
+                            tension: 0.1,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Applied Force (N)' }, min: 0, max: 1 },
+                            y: { title: { display: true, text: 'Friction Force (N)' }, beginAtZero: true, max: 120 }
+                        },
+                        animation: false,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                const update = (appliedForce) => {
+                    let frictionForce, blockXPosition = 50;
+                    
+                    if (appliedForce < config.maxStaticFriction) {
+                        frictionForce = appliedForce;
+                        elements.statusBox.className = "status-box static";
+                        elements.statusBox.textContent = "STATIC: Friction matches your push.";
+                    } else if (appliedForce === config.maxStaticFriction) {
+                        frictionForce = config.maxStaticFriction;
+                        elements.statusBox.className = "status-box impending";
+                        elements.statusBox.textContent = "IMPENDING MOTION: At friction's limit!";
+                    } else {
+                        frictionForce = config.kineticFriction;
+                        elements.statusBox.className = "status-box kinetic";
+                        elements.statusBox.textContent = "SLIDING: Kinetic friction takes over.";
+                        blockXPosition += ((appliedForce - config.maxStaticFriction) / (slider.max - config.maxStaticFriction)) * config.maxMovement;
+                    }
+                    if (appliedForce === 0) {
+                        elements.statusBox.textContent = "Use the slider to apply force.";
+                        elements.statusBox.className = "status-box";
+                    }
+
+                    elements.block.style.left = `${blockXPosition}%`;
+                    
+                    const appliedLength = appliedForce * config.scaleFactor;
+                    elements.applied.body.style.width = `${appliedLength}px`;
+                    elements.applied.head.style.left = `${appliedLength}px`;
+                    elements.applied.label.textContent = `${appliedForce} N`;
+                    elements.applied.label.style.left = `${appliedLength / 2}px`;
+                    elements.applied.vec.style.display = appliedForce > 0 ? 'flex' : 'none';
+
+                    const frictionLength = frictionForce * config.scaleFactor;
+                    elements.friction.body.style.width = `${frictionLength}px`;
+                    elements.friction.head.style.right = `${frictionLength}px`;
+                    elements.friction.label.textContent = `${frictionForce} N`;
+                    elements.friction.label.style.right = `${frictionLength / 2}px`;
+                    elements.friction.vec.style.display = frictionForce > 0 ? 'flex' : 'none';
+
+                    elements.chart.options.scales.x.max = appliedForce > 0 ? appliedForce : 1;
+                    elements.chart.update('none');
+                };
+                
+                slider.addEventListener('input', () => update(parseInt(slider.value)));
+                update(0);
+            }
+        };
+
+        app.init();
+    });
+    </script>
+</body>
+</html>
